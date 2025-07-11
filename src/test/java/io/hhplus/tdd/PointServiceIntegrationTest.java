@@ -1,8 +1,10 @@
 package io.hhplus.tdd;
 
+import io.hhplus.tdd.config.PointPolicyProperties;
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import io.hhplus.tdd.error.InsufficientPointException;
+import io.hhplus.tdd.error.InvalidAmountException;
 import io.hhplus.tdd.point.model.PointHistory;
 import io.hhplus.tdd.point.model.TransactionType;
 import io.hhplus.tdd.point.model.UserPoint;
@@ -27,6 +29,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class PointServiceIntegrationTest {
 
     static final AtomicLong userIdGenerator = new AtomicLong();
+
+    @Autowired
+    private PointPolicyProperties properties = new PointPolicyProperties();
 
     @Autowired
     private UserPointTable userPointTable;
@@ -85,6 +90,15 @@ public class PointServiceIntegrationTest {
         softly.assertThat(histories.get(0).type()).isEqualTo(TransactionType.CHARGE);
         softly.assertThat(histories.get(1).type()).isEqualTo(TransactionType.USE);
         softly.assertAll();
+    }
+
+    @Test
+    @DisplayName("충전 실패 시나리오 테스트")
+    void charge_whenAmountIsWrong_throwsException() {
+        long userId = userIdGenerator.incrementAndGet();
+
+        assertThatThrownBy(() -> pointService.charge(userId, properties.getMaxChargeAmount() + 1))
+                .isInstanceOf(InvalidAmountException.class);
     }
 
     @Test

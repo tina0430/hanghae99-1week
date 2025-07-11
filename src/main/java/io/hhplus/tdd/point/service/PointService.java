@@ -48,7 +48,7 @@ public class PointService {
         if (amount <= 0) {
             throw new InvalidAmountException("유효하지 않은 포인트 충전 시도: " + amount);
         } else if (amount > maxChargeAmount) {
-            throw new InvalidAmountException("1회 충전 한도 초과: " + amount); // 이게 과연 필요할까? 개발자가 정하는 영역일까?
+            throw new InvalidAmountException("1회 충전 한도 초과: " + amount);
         }
         UserPoint userPoint = updatePoint(userId, amount);
         pointHistoryTable.insert(userId, amount, TransactionType.CHARGE, System.currentTimeMillis()); // todo 따로 검증
