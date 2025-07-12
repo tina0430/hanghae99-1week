@@ -1,0 +1,5 @@
+spring:
+  application.name: hhplus-tdd
+
+point:
+  max-charge-amount: 1000000
